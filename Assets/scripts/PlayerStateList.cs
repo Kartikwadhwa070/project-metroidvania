@@ -6,6 +6,9 @@ public class PlayerStateList : MonoBehaviour
 {
     public bool jumping;
     public bool dashing;
+    public bool recoilingX,recoilingY;
+    public bool lookingRight;
+    public bool invincible;
     // Start is called before the first frame update
     void Start()
     {
