@@ -7,6 +7,7 @@ public class playerController : MonoBehaviour
     [Header("Horizontal Movement Settings")]
     [HideInInspector] public PlayerStateList pState;
     private Rigidbody2D rb;
+    private SpriteRenderer sr;
     private float xAxis, yAxis;
     private float gravity;
     [Header("Ground Check Settings")]
@@ -48,16 +49,22 @@ public class playerController : MonoBehaviour
     [SerializeField] float damage;
     [SerializeField] GameObject slashEffect;
 
-    [Header("Recoil")]
+    bool restoreTime;
+    float restoreTimeSpeed;
+
+    [Header("Recoil Settings")]
     [SerializeField] int recoilXsteps = 5;
     [SerializeField] int recoilYsteps = 5;
     [SerializeField] float recoilXSpeed = 100;
     [SerializeField] float recoilYSpeed = 100;
-    int stepsXRecoiled,stepsYRecoiled;
+    int stepsXRecoiled, stepsYRecoiled;
 
     [Header("Health Settings")]
-    public int health;
     public int maxHealth;
+    [SerializeField] GameObject bloodSpurt;
+    [SerializeField] float hitFlashSpeed = 5f;
+    public delegate void OnHealthChangedDelegate();
+    [HideInInspector] public OnHealthChangedDelegate onHealthChangedCallback;
      
 
     // Start is called before the first frame update
@@ -72,6 +79,7 @@ public class playerController : MonoBehaviour
             Instance = this;
         }
         health = maxHealth;
+
     }
     void Start()
     {
@@ -79,6 +87,8 @@ public class playerController : MonoBehaviour
         anim = GetComponent<Animator>();
         pState = GetComponent<PlayerStateList>();
         gravity = rb.gravityScale;
+        sr = GetComponent<SpriteRenderer>();
+        sr.material = new Material(sr.material);
     }
 
     private void OnDrawGizmos()
@@ -93,22 +103,32 @@ public class playerController : MonoBehaviour
     void Update()
     {
         GetInputs();
-        updateJumpVariables();
+        UpdateJumpVariables();
+
         if (pState.dashing) return;
-        flip();
+        Flip();
         Move();
         Jump();
         StartDash();
         Attack();
+        RestoreTimeScale();
+        FlashWhileInvincible();
+    }
+
+    private void FixedUpdate()
+    {
+        if (pState.dashing) return;
         Recoil();
     }
+
+
     void GetInputs()
     {
         xAxis = Input.GetAxisRaw("Horizontal");
         yAxis = Input.GetAxisRaw("Vertical");
-        attack = Input.GetMouseButtonDown(0);
+        attack = Input.GetButtonDown("Attack");
     }
-    void flip()
+    void Flip()
     {
         if (xAxis < 0)
         {
@@ -286,25 +306,79 @@ public class playerController : MonoBehaviour
         stepsYRecoiled = 0;
         pState.recoilingY = false;
     }
-    
+
     public void TakeDamage(float _damage)
     {
-        health -= Mathf.RoundToInt(_damage);
+        health = Mathf.Clamp(health - Mathf.RoundToInt(_damage), 0, maxHealth);
         StartCoroutine(StopTakingDamage());
     }
 
     IEnumerator StopTakingDamage()
     {
         pState.invincible = true;
-        anim.SetTrigger("takeDamage"); 
-        ClampHealth();
+        GameObject _bloodSpurtParticles = Instantiate(bloodSpurt, transform.position,Quaternion.identity);
+        Destroy(_bloodSpurtParticles, 1.5f);
+        anim.SetTrigger("takeDamage");
         yield return new WaitForSeconds(1f);
         pState.invincible = false;
     }
 
-    void ClampHealth()
+    void FlashWhileInvincible()
     {
-        health =Mathf.Clamp(health, 0 , maxHealth );
+        sr.material.color = pState.invincible ? Color.Lerp(Color.white, Color.black, Mathf.PingPong(Time.time * hitFlashSpeed, 1.0f)) : Color.white;
+    }
+
+
+    void RestoreTimeScale()
+    {
+        if (restoreTime)
+        {
+            if (Time.timeScale < 1)
+            {
+                Time.timeScale += Time.unscaledDeltaTime * restoreTimeSpeed;
+            }
+            else
+            {
+                Time.timeScale = 1;
+                restoreTime = false;
+            }
+        }
+    }
+
+    public void HitStopTime(float _newTimeScale, int _restoreSpeed, float _delay)
+    {
+        restoreTimeSpeed = _restoreSpeed;
+        if (_delay > 0)
+        {
+            StopCoroutine(StartTimeAgain(_delay));
+            StartCoroutine(StartTimeAgain(_delay));
+        }
+        else
+        {
+            restoreTime = true;
+        }
+        Time.timeScale = _newTimeScale;
+    }
+
+    IEnumerator StartTimeAgain(float _delay)
+    {
+        yield return new WaitForSecondsRealtime(_delay);
+        restoreTime = true;
+    }
+
+    private int health;
+    public int Health
+    {
+        get { return health; }
+        set
+        {
+            if (health != value) // Only trigger if health changes
+            {
+                health = Mathf.Clamp(value, 0, maxHealth);
+                Debug.Log($"Health updated: {health}");
+                onHealthChangedCallback?.Invoke();
+            }
+        }
     }
 
     void Jump()
@@ -330,7 +404,8 @@ public class playerController : MonoBehaviour
         }
         anim.SetBool("Jumping", !Grounded());
     }
-    void updateJumpVariables()
+
+    void UpdateJumpVariables()
     {
         if (Grounded())
         {
