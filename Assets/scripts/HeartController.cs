@@ -9,7 +9,6 @@ public class HeartController : MonoBehaviour
     private Image[] heartFills;
     public Transform heartsParent;
     public GameObject heartContainerPrefab;
-    // Start is called before the first frame update
     void Start()
     {
         playerController.Instance.onHealthChangedCallback += UpdateHeartsHUD;
@@ -42,18 +41,23 @@ public class HeartController : MonoBehaviour
     }
     void SetFilledHearts()
     {
+        Debug.Log($"SetFilledHearts called - Current Health: {playerController.Instance.Health}, MaxHealth: {playerController.Instance.maxHealth}");
         for (int i = 0; i < heartFills.Length; i++)
         {
+            Debug.Log($"Setting heart {i} - Should be filled: {i < playerController.Instance.Health}");
             if (i < playerController.Instance.Health)
             {
                 heartFills[i].fillAmount = 1;
+                Debug.Log($"Heart {i} filled");
             }
             else
             {
                 heartFills[i].fillAmount = 0;
+                Debug.Log($"Heart {i} emptied");
             }
         }
     }
+
     void InstantiateHeartContainers()
     {
         for (int i = 0; i < playerController.Instance.maxHealth; i++)
@@ -65,9 +69,11 @@ public class HeartController : MonoBehaviour
         }
     }
 
+
+
     void UpdateHeartsHUD()
     {
-        Debug.Log("Updating Hearts HUD");
+        Debug.Log($"UpdateHeartsHUD called - Current Health: {playerController.Instance.Health}");
         SetHeartContainers();
         SetFilledHearts();
     }

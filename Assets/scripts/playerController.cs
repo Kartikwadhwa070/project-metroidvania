@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class playerController : MonoBehaviour
 {
@@ -65,8 +66,17 @@ public class playerController : MonoBehaviour
     [SerializeField] float hitFlashSpeed = 5f;
     public delegate void OnHealthChangedDelegate();
     [HideInInspector] public OnHealthChangedDelegate onHealthChangedCallback;
-     
 
+    float healTimer;
+    [SerializeField] float timeToHeal;
+
+
+    [Header("Mana Settings")]
+    [SerializeField] UnityEngine.UI.Image manaStorage;
+
+    [SerializeField] float mana;
+    [SerializeField] float manaDrainSpeed;
+    [SerializeField] float manaGain;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -89,6 +99,8 @@ public class playerController : MonoBehaviour
         gravity = rb.gravityScale;
         sr = GetComponent<SpriteRenderer>();
         sr.material = new Material(sr.material);
+        Mana = mana;
+        manaStorage.fillAmount = Mana;
     }
 
     private void OnDrawGizmos()
@@ -104,16 +116,18 @@ public class playerController : MonoBehaviour
     {
         GetInputs();
         UpdateJumpVariables();
-
         if (pState.dashing) return;
-        Flip();
+        RestoreTimeScale();
+        FlashWhileInvincible();
         Move();
+        Heal();
+        if (pState.healing) return;
+        Flip();
         Jump();
         StartDash();
         Attack();
-        RestoreTimeScale();
-        FlashWhileInvincible();
     }
+
 
     private void FixedUpdate()
     {
@@ -144,6 +158,7 @@ public class playerController : MonoBehaviour
 
     private void Move()
     {
+        if (pState.healing) rb.velocity = new Vector2(0, 0);
         rb.velocity = new Vector2(walkSpeed * xAxis, rb.velocity.y);
         bool isWalking = Mathf.Abs(rb.velocity.x) > 0.1f && Grounded();
         anim.SetBool("Walking", isWalking);
@@ -217,6 +232,10 @@ public class playerController : MonoBehaviour
             if (enemy != null)
             {
                 enemy.EnemyHit(damage, (transform.position - objectsToHit[i].transform.position).normalized,_recoilStrength);
+                if (objectsToHit[i].CompareTag("Enemy"))
+                {
+                    Mana += manaGain;   
+                }
             }
         }
     }
@@ -283,6 +302,46 @@ public class playerController : MonoBehaviour
         }
     }
 
+    void Heal()
+    {
+        if (Input.GetButton("Healing") && Health < maxHealth && Mana>0 && Grounded() && !pState.dashing)
+        {
+            pState.healing = true;
+            anim.SetBool("healing",true);
+            healTimer += Time.deltaTime;
+            if (healTimer >= timeToHeal)
+            {
+                Health++;
+                healTimer = 0;
+            }
+            Mana -= Time.deltaTime * manaDrainSpeed;
+        }
+        else
+        {
+            pState.healing = false;
+            anim.SetBool("healing", false);
+            healTimer = 0;
+        }
+    }
+
+    float Mana
+    {
+        get
+        {
+            return mana;
+        }
+        set
+        {
+            if (mana != value)
+            {
+                Debug.Log($"Mana changing from {mana} to {value}");
+                mana = Mathf.Clamp(value, 0, 1);
+                manaStorage.fillAmount = mana;
+                Debug.Log($"New fillAmount: {manaStorage.fillAmount}");
+            }
+        }
+    }
+
     public bool Grounded()
     {
         if (Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckY, whatIsGround) || Physics2D.Raycast(groundCheck.position + new Vector3(groundCheckX, 0, 0), Vector2.down, groundCheckY, whatIsGround) || Physics2D.Raycast(groundCheck.position + new Vector3(-groundCheckX, 0, 0), Vector2.down, groundCheckY, whatIsGround))
@@ -309,7 +368,9 @@ public class playerController : MonoBehaviour
 
     public void TakeDamage(float _damage)
     {
-        health = Mathf.Clamp(health - Mathf.RoundToInt(_damage), 0, maxHealth);
+        Debug.Log($"TakeDamage called - Current Health before: {Health}");
+        Health = Health - Mathf.RoundToInt(_damage); // Use the property instead of the field
+        Debug.Log($"Health after damage: {Health}");
         StartCoroutine(StopTakingDamage());
     }
 
@@ -335,7 +396,7 @@ public class playerController : MonoBehaviour
         {
             if (Time.timeScale < 1)
             {
-                Time.timeScale += Time.unscaledDeltaTime * restoreTimeSpeed;
+                Time.timeScale += Time.unscaledDeltaTime* restoreTimeSpeed;
             }
             else
             {
@@ -372,10 +433,11 @@ public class playerController : MonoBehaviour
         get { return health; }
         set
         {
-            if (health != value) // Only trigger if health changes
+            Debug.Log($"Health changing from {health} to {value}");
+            if (health != value)
             {
                 health = Mathf.Clamp(value, 0, maxHealth);
-                Debug.Log($"Health updated: {health}");
+                Debug.Log($"Health clamped to: {health}");
                 onHealthChangedCallback?.Invoke();
             }
         }

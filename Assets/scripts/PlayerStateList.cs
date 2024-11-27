@@ -9,6 +9,7 @@ public class PlayerStateList : MonoBehaviour
     public bool recoilingX,recoilingY;
     public bool lookingRight;
     public bool invincible;
+    public bool healing;
     // Start is called before the first frame update
     void Start()
     {
