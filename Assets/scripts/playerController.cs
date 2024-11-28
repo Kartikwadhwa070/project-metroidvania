@@ -77,6 +77,19 @@ public class playerController : MonoBehaviour
     [SerializeField] float mana;
     [SerializeField] float manaDrainSpeed;
     [SerializeField] float manaGain;
+
+    [Header("Spell Settings")]
+
+    [SerializeField] float manaSpellCost = 0.3f;
+    [SerializeField] float timeBetweenCast = 0.5f;
+    float timeSinceCast;
+    [SerializeField] float spellDamage;
+    [SerializeField] float downSpellForce;
+
+    [SerializeField] GameObject sideSpellFireball;
+    [SerializeField] GameObject upSpellExplosion;
+    [SerializeField] GameObject downSpellFireball;
+
     // Start is called before the first frame update
     private void Awake()
     {
@@ -116,11 +129,13 @@ public class playerController : MonoBehaviour
     {
         GetInputs();
         UpdateJumpVariables();
+
         if (pState.dashing) return;
         RestoreTimeScale();
         FlashWhileInvincible();
         Move();
         Heal();
+        CastSpell();
         if (pState.healing) return;
         Flip();
         Jump();
@@ -128,6 +143,14 @@ public class playerController : MonoBehaviour
         Attack();
     }
 
+
+    private void OnTriggerEnter2D(Collider2D _other)
+    {
+        if (_other.GetComponent<Enemy>() != null && pState.casting)
+        {
+            _other.GetComponent<Enemy>().EnemyHit(spellDamage, (_other.transform.position - transform.position).normalized, -recoilYSpeed);
+        }
+    }
 
     private void FixedUpdate()
     {
@@ -203,12 +226,12 @@ public class playerController : MonoBehaviour
 
             if (yAxis == 0 || yAxis < 0 && Grounded())
             {
-                Hit(SideAttackTransform, SideAttackArea,ref pState.recoilingX,  recoilXSpeed);
+                Hit(SideAttackTransform, SideAttackArea, ref pState.recoilingX, recoilXSpeed);
                 Instantiate(slashEffect, SideAttackTransform);
             }
             else if (yAxis > 0)
             {
-                Hit(UpAttackTransform, UpAttackArea,ref  pState.recoilingY, recoilYSpeed);
+                Hit(UpAttackTransform, UpAttackArea, ref pState.recoilingY, recoilYSpeed);
                 slashEffectAtAngle(slashEffect, 90, UpAttackTransform);
             }
             else if (yAxis < 0 && !Grounded())
@@ -222,7 +245,7 @@ public class playerController : MonoBehaviour
     void Hit(Transform _attackTransform, Vector2 _attackArea, ref bool _recoilDir, float _recoilStrength)
     {
         Collider2D[] objectsToHit = Physics2D.OverlapBoxAll(_attackTransform.position, _attackArea, 0, EnemyLayer);
-        if(objectsToHit.Length >0)
+        if (objectsToHit.Length > 0)
         {
             _recoilDir = true;
         }
@@ -231,10 +254,10 @@ public class playerController : MonoBehaviour
             Enemy enemy = objectsToHit[i].GetComponent<Enemy>();
             if (enemy != null)
             {
-                enemy.EnemyHit(damage, (transform.position - objectsToHit[i].transform.position).normalized,_recoilStrength);
+                enemy.EnemyHit(damage, (transform.position - objectsToHit[i].transform.position).normalized, _recoilStrength);
                 if (objectsToHit[i].CompareTag("Enemy"))
                 {
-                    Mana += manaGain;   
+                    Mana += manaGain;
                 }
             }
         }
@@ -244,7 +267,7 @@ public class playerController : MonoBehaviour
     {
         _slashEffect = Instantiate(_slashEffect, _attackTransform);
         _slashEffect.transform.eulerAngles = new Vector3(0, 0, _effectAngle);
-        _slashEffect.transform.localScale = new Vector2(transform.localScale.x,_attackTransform.localScale.y); 
+        _slashEffect.transform.localScale = new Vector2(transform.localScale.x, _attackTransform.localScale.y);
     }
 
     void Recoil()
@@ -271,14 +294,14 @@ public class playerController : MonoBehaviour
             {
                 rb.velocity = new Vector2(rb.velocity.x, -recoilYSpeed);
             }
-            airJumpCounter = 0; 
+            airJumpCounter = 0;
         }
         else
         {
             rb.gravityScale = gravity;
         }
 
-        if(pState.recoilingX && stepsXRecoiled < recoilXsteps)
+        if (pState.recoilingX && stepsXRecoiled < recoilXsteps)
         {
             stepsXRecoiled++;
         }
@@ -286,7 +309,7 @@ public class playerController : MonoBehaviour
         {
             StopRecoilX();
         }
-        
+
         if (pState.recoilingY && stepsYRecoiled < recoilYsteps)
         {
             stepsYRecoiled++;
@@ -304,10 +327,10 @@ public class playerController : MonoBehaviour
 
     void Heal()
     {
-        if (Input.GetButton("Healing") && Health < maxHealth && Mana>0 && Grounded() && !pState.dashing)
+        if (Input.GetButton("Healing") && Health < maxHealth && Mana > 0 && Grounded() && !pState.dashing)
         {
             pState.healing = true;
-            anim.SetBool("healing",true);
+            anim.SetBool("healing", true);
             healTimer += Time.deltaTime;
             if (healTimer >= timeToHeal)
             {
@@ -342,90 +365,148 @@ public class playerController : MonoBehaviour
         }
     }
 
-    public bool Grounded()
+
+    void CastSpell()
     {
-        if (Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckY, whatIsGround) || Physics2D.Raycast(groundCheck.position + new Vector3(groundCheckX, 0, 0), Vector2.down, groundCheckY, whatIsGround) || Physics2D.Raycast(groundCheck.position + new Vector3(-groundCheckX, 0, 0), Vector2.down, groundCheckY, whatIsGround))
+        if (Input.GetButtonDown("CastSpell") && timeSinceCast >= timeBetweenCast && Mana >= manaSpellCost)
         {
-            return true;
+            pState.casting = true;
+            timeSinceCast = 0;
+            StartCoroutine(CastCoroutine());
         }
         else
         {
-            return false;
+            timeSinceCast += Time.deltaTime;
+        }
+        if (Grounded())
+        {
+            downSpellFireball.SetActive(false);
+        }
+        if (downSpellFireball.activeInHierarchy)
+        {
+            rb.velocity += downSpellForce * Vector2.down;
         }
     }
 
-    void StopRecoilX()
-    {
-        stepsXRecoiled = 0;
-        pState.recoilingX = false;
-    }
 
-    void StopRecoilY()
+    IEnumerator CastCoroutine()
     {
-        stepsYRecoiled = 0;
-        pState.recoilingY = false;
-    }
+        anim.SetBool("casting", true);
+        yield return new WaitForSeconds(0.15f);
 
-    public void TakeDamage(float _damage)
-    {
-        Debug.Log($"TakeDamage called - Current Health before: {Health}");
-        Health = Health - Mathf.RoundToInt(_damage); // Use the property instead of the field
-        Debug.Log($"Health after damage: {Health}");
-        StartCoroutine(StopTakingDamage());
-    }
-
-    IEnumerator StopTakingDamage()
-    {
-        pState.invincible = true;
-        GameObject _bloodSpurtParticles = Instantiate(bloodSpurt, transform.position,Quaternion.identity);
-        Destroy(_bloodSpurtParticles, 1.5f);
-        anim.SetTrigger("takeDamage");
-        yield return new WaitForSeconds(1f);
-        pState.invincible = false;
-    }
-
-    void FlashWhileInvincible()
-    {
-        sr.material.color = pState.invincible ? Color.Lerp(Color.white, Color.black, Mathf.PingPong(Time.time * hitFlashSpeed, 1.0f)) : Color.white;
-    }
-
-
-    void RestoreTimeScale()
-    {
-        if (restoreTime)
+        if (yAxis == 0 || (yAxis < 0 && Grounded()))
         {
-            if (Time.timeScale < 1)
+            GameObject _fireBall = Instantiate(sideSpellFireball, SideAttackTransform.position, Quaternion.identity);
+            if (pState.lookingRight)
             {
-                Time.timeScale += Time.unscaledDeltaTime* restoreTimeSpeed;
+                _fireBall.transform.eulerAngles = Vector3.zero;
             }
             else
             {
-                Time.timeScale = 1;
-                restoreTime = false;
+                _fireBall.transform.eulerAngles = new Vector2(_fireBall.transform.eulerAngles.x, 180);
+            }
+            pState.recoilingX = true;
+        }
+        else if (yAxis > 0)
+        {
+            Instantiate(upSpellExplosion, transform);
+            rb.velocity = Vector2.zero;
+        }
+        else if (yAxis < 0 && !Grounded())
+        {
+            downSpellFireball.SetActive(true);
+        }
+
+        Mana -= manaSpellCost;
+        yield return new WaitForSeconds(0.35f);
+        anim.SetBool("casting", false);
+        pState.casting = false;
+    }
+
+    public bool Grounded()
+        {
+            if (Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckY, whatIsGround) || Physics2D.Raycast(groundCheck.position + new Vector3(groundCheckX, 0, 0), Vector2.down, groundCheckY, whatIsGround) || Physics2D.Raycast(groundCheck.position + new Vector3(-groundCheckX, 0, 0), Vector2.down, groundCheckY, whatIsGround))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
-    }
 
-    public void HitStopTime(float _newTimeScale, int _restoreSpeed, float _delay)
-    {
-        restoreTimeSpeed = _restoreSpeed;
-        if (_delay > 0)
+        void StopRecoilX()
         {
-            StopCoroutine(StartTimeAgain(_delay));
-            StartCoroutine(StartTimeAgain(_delay));
+            stepsXRecoiled = 0;
+            pState.recoilingX = false;
         }
-        else
+
+        void StopRecoilY()
         {
+            stepsYRecoiled = 0;
+            pState.recoilingY = false;
+        }
+
+        public void TakeDamage(float _damage)
+        {
+            Debug.Log($"TakeDamage called - Current Health before: {Health}");
+            Health = Health - Mathf.RoundToInt(_damage); // Use the property instead of the field
+            Debug.Log($"Health after damage: {Health}");
+            StartCoroutine(StopTakingDamage());
+        }
+
+        IEnumerator StopTakingDamage()
+        {
+            pState.invincible = true;
+            GameObject _bloodSpurtParticles = Instantiate(bloodSpurt, transform.position, Quaternion.identity);
+            Destroy(_bloodSpurtParticles, 1.5f);
+            anim.SetTrigger("takeDamage");
+            yield return new WaitForSeconds(1f);
+            pState.invincible = false;
+        }
+
+        void FlashWhileInvincible()
+        {
+            sr.material.color = pState.invincible ? Color.Lerp(Color.white, Color.black, Mathf.PingPong(Time.time * hitFlashSpeed, 1.0f)) : Color.white;
+        }
+
+
+        void RestoreTimeScale()
+        {
+            if (restoreTime)
+            {
+                if (Time.timeScale < 1)
+                {
+                    Time.timeScale += Time.unscaledDeltaTime * restoreTimeSpeed;
+                }
+                else
+                {
+                    Time.timeScale = 1;
+                    restoreTime = false;
+                }
+            }
+        }
+
+        public void HitStopTime(float _newTimeScale, int _restoreSpeed, float _delay)
+        {
+            restoreTimeSpeed = _restoreSpeed;
+            if (_delay > 0)
+            {
+                StopCoroutine(StartTimeAgain(_delay));
+                StartCoroutine(StartTimeAgain(_delay));
+            }
+            else
+            {
+                restoreTime = true;
+            }
+            Time.timeScale = _newTimeScale;
+        }
+
+        IEnumerator StartTimeAgain(float _delay)
+        {
+            yield return new WaitForSecondsRealtime(_delay);
             restoreTime = true;
         }
-        Time.timeScale = _newTimeScale;
-    }
-
-    IEnumerator StartTimeAgain(float _delay)
-    {
-        yield return new WaitForSecondsRealtime(_delay);
-        restoreTime = true;
-    }
 
     private int health;
     public int Health

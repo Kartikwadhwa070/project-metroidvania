@@ -8,22 +8,18 @@ public class Enemy : MonoBehaviour
     [SerializeField] protected float recoilLength;
     [SerializeField] protected float recoilFactor;
     [SerializeField] protected bool isRecoiling = false;
-    [SerializeField] protected playerController player;
-    [SerializeField] protected float Speed;
+
+    [SerializeField] protected float speed;
 
     [SerializeField] protected float damage;
 
     protected float recoilTimer;
     protected Rigidbody2D rb;
+
     // Start is called before the first frame update
     protected virtual void Start()
     {
-
-    }
-    protected virtual void Awake()
-    {
         rb = GetComponent<Rigidbody2D>();
-        player = playerController.Instance;
     }
     // Update is called once per frame
     protected virtual void Update()
@@ -34,7 +30,7 @@ public class Enemy : MonoBehaviour
         }
         if (isRecoiling)
         {
-            if(recoilTimer <recoilLength)
+            if (recoilTimer < recoilLength)
             {
                 recoilTimer += Time.deltaTime;
             }
@@ -52,15 +48,15 @@ public class Enemy : MonoBehaviour
         if (!isRecoiling)
         {
             rb.AddForce(-_hitForce * recoilFactor * _hitDirection);
+            isRecoiling = true;
         }
     }
-    
-    protected void OnCollisionStay2D(Collision2D _other)
+    protected virtual void OnCollisionStay2D(Collision2D _other)
     {
         if (_other.gameObject.CompareTag("Player") && !playerController.Instance.pState.invincible)
         {
             Attack();
-            playerController.Instance.HitStopTime(0, 5,.25f);
+            playerController.Instance.HitStopTime(0, 5, 0.5f);
         }
     }
 
@@ -68,4 +64,5 @@ public class Enemy : MonoBehaviour
     {
         playerController.Instance.TakeDamage(damage);
     }
-}
+
+}   
