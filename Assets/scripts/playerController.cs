@@ -80,15 +80,17 @@ public class playerController : MonoBehaviour
 
     [Header("Spell Settings")]
 
+    [Header("Spell Settings")]
+
     [SerializeField] float manaSpellCost = 0.3f;
     [SerializeField] float timeBetweenCast = 0.5f;
     float timeSinceCast;
     [SerializeField] float spellDamage;
     [SerializeField] float downSpellForce;
-
     [SerializeField] GameObject sideSpellFireball;
     [SerializeField] GameObject upSpellExplosion;
     [SerializeField] GameObject downSpellFireball;
+    float castOrHealTimer;
 
     // Start is called before the first frame update
     private void Awake()
@@ -101,7 +103,7 @@ public class playerController : MonoBehaviour
         {
             Instance = this;
         }
-        health = maxHealth;
+        DontDestroyOnLoad(gameObject);
 
     }
     void Start()
@@ -112,6 +114,7 @@ public class playerController : MonoBehaviour
         gravity = rb.gravityScale;
         sr = GetComponent<SpriteRenderer>();
         sr.material = new Material(sr.material);
+        Health = maxHealth;
         Mana = mana;
         manaStorage.fillAmount = Mana;
     }
@@ -164,6 +167,14 @@ public class playerController : MonoBehaviour
         xAxis = Input.GetAxisRaw("Horizontal");
         yAxis = Input.GetAxisRaw("Vertical");
         attack = Input.GetButtonDown("Attack");
+        if (Input.GetButton("Cast/Heal"))
+        {
+            castOrHealTimer += Time.deltaTime;
+        }
+        else
+        {
+            castOrHealTimer = 0;
+        }
     }
     void Flip()
     {
@@ -203,15 +214,37 @@ public class playerController : MonoBehaviour
         }
         if (!Grounded())
             hasAirDashed = true;
+
         pState.dashing = true;
         anim.SetBool("IsDashing", true);
         rb.gravityScale = 0;
-        rb.velocity = new Vector2(transform.localScale.x * dashSpeed, 0);
-        if (Grounded()) Instantiate(dashEffect, transform);
-        yield return new WaitForSeconds(dashTime);
-        rb.gravityScale = gravity;
-        pState.dashing = false;
-        anim.SetBool("IsDashing", false);
+        int _dir = pState.lookingRight ? 1 : -1;
+        rb.velocity = new Vector2(_dir * dashSpeed, 0);
+
+        if (Grounded())
+            Instantiate(dashEffect, transform);
+
+        float dashTimer = 0;
+        while (dashTimer < dashTime && pState.dashing)
+        {
+            dashTimer += Time.deltaTime;
+            yield return null;
+        }
+
+        if (pState.dashing)
+            StopDash();
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (pState.dashing && collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+        {
+            StopDash();
+        }
+    }
+
+    private IEnumerator DashCooldown()
+    {
         yield return new WaitForSeconds(dashCooldown);
         canDash = true;
     }
@@ -327,7 +360,7 @@ public class playerController : MonoBehaviour
 
     void Heal()
     {
-        if (Input.GetButton("Healing") && Health < maxHealth && Mana > 0 && Grounded() && !pState.dashing)
+        if (Input.GetButton("Cast/Heal") && castOrHealTimer > 0.05f && Health < maxHealth && Mana > 0 && Grounded() && !pState.dashing)
         {
             pState.healing = true;
             anim.SetBool("healing", true);
@@ -368,7 +401,7 @@ public class playerController : MonoBehaviour
 
     void CastSpell()
     {
-        if (Input.GetButtonDown("CastSpell") && timeSinceCast >= timeBetweenCast && Mana >= manaSpellCost)
+        if (Input.GetButtonUp("Cast/Heal") && castOrHealTimer <= 0.05f && timeSinceCast >= timeBetweenCast && Mana >= manaSpellCost)
         {
             pState.casting = true;
             timeSinceCast = 0;
@@ -526,21 +559,18 @@ public class playerController : MonoBehaviour
 
     void Jump()
     {
-        if (!pState.jumping)
+        if (jumpBufferCounter > 0 && coyoteTimeCounter > 0 && !pState.jumping)
         {
-            if (jumpBufferCounter > 0 && coyoteTimeCounter > 0)
-            {
-                rb.velocity = new Vector2(rb.velocity.x, JumpForce);
-                pState.jumping = true;
-            }
-            else if (!Grounded() && airJumpCounter < maxAirJumps && Input.GetButtonDown("Jump"))
-            {
-                pState.jumping = true;
-                airJumpCounter++;
-                rb.velocity = new Vector2(rb.velocity.x, JumpForce);
-            }
+            rb.velocity = new Vector2(rb.velocity.x, JumpForce);
+            pState.jumping = true;
         }
-        if (Input.GetButtonUp("Jump") && rb.velocity.y > 0)
+        if (!Grounded() && airJumpCounter < maxAirJumps && Input.GetButtonDown("Jump"))
+        {
+            pState.jumping = true;
+            airJumpCounter++;
+            rb.velocity = new Vector2(rb.velocity.x, JumpForce);
+        }
+        if (Input.GetButtonUp("Jump") && rb.velocity.y > 3)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
             pState.jumping = false;
@@ -569,5 +599,14 @@ public class playerController : MonoBehaviour
         {
             jumpBufferCounter--;
         }
+    }
+
+    private void StopDash()
+    {
+        StopCoroutine("Dash");
+        rb.gravityScale = gravity;
+        pState.dashing = false;
+        anim.SetBool("IsDashing", false);
+        StartCoroutine(DashCooldown());
     }
 }

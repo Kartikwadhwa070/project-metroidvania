@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Zombie : Enemy
+public class Zombie : Enemy 
 {
     // Start is called before the first frame update
+
     protected override void Start()
     {
         base.Start();
@@ -17,14 +18,11 @@ public class Zombie : Enemy
         base.Update();
         if (!isRecoiling)
         {
-            transform.position = Vector2.MoveTowards
-                (transform.position, new Vector2(playerController.Instance.transform.position.x, transform.position.y),
-                speed * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(transform.position, new Vector2(playerController.Instance.transform.position.x, transform.position.y), Speed * Time.deltaTime);
         }
     }
-    public override void EnemyHit(float damageDone, Vector2 hitDirection, float hitForce)
+    public override void EnemyHit(float _damageDone, Vector2 _hitDirection, float _hitForce)
     {
-        base.EnemyHit(damageDone, hitDirection, hitForce);
+        base.EnemyHit( _damageDone,  _hitDirection, _hitForce);
     }
-
 }

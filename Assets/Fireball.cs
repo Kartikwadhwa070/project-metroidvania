@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FireBall : MonoBehaviour
+public class Fireball : MonoBehaviour
+
 {
     [SerializeField] float damage;
     [SerializeField] float hitForce;
@@ -19,7 +20,6 @@ public class FireBall : MonoBehaviour
     {
         transform.position += speed * transform.right;
     }
-    //detect hit
     private void OnTriggerEnter2D(Collider2D _other)
     {
         if (_other.tag == "Enemy")
