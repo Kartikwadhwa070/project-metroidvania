@@ -18,7 +18,11 @@ public class Zombie : Enemy
         base.Update();
         if (!isRecoiling)
         {
-            transform.position = Vector2.MoveTowards(transform.position, new Vector2(playerController.Instance.transform.position.x, transform.position.y), Speed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(
+                transform.position,
+                new Vector3(playerController.Instance.transform.position.x, transform.position.y, transform.position.z),
+                Speed * Time.deltaTime
+            );
         }
     }
     public override void EnemyHit(float _damageDone, Vector2 _hitDirection, float _hitForce)

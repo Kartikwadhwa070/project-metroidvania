@@ -1,23 +1,65 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class camerafollow : MonoBehaviour
+public class CameraFollow : MonoBehaviour
 {
-    [SerializeField] private float followSpeed = 0.1f;
-    [SerializeField] private Transform player; // Assign this in the Inspector.
+    [SerializeField] private Vector3 offset = new Vector3(0f, 5f, -10f); // Default offset for perspective view
+    [SerializeField] private float smoothTime = 0.25f;
+    [SerializeField] private float fieldOfView = 60f;  // Standard perspective FOV
+    private Vector3 velocity = Vector3.zero;
 
-    private void Update()
+    [SerializeField] private Transform target;
+    private Camera cam;
+
+    void Awake()
     {
-        if (player != null)
+        DontDestroyOnLoad(gameObject);
+        cam = GetComponent<Camera>();
+        if (cam != null)
         {
-            Vector3 targetPosition = player.position;
-            targetPosition.z = transform.position.z; // Preserve camera's Z position.
-            transform.position = Vector3.Lerp(transform.position, targetPosition, followSpeed);
+            cam.orthographic = false;  // Ensure perspective mode
+            cam.fieldOfView = fieldOfView;
         }
-        else
+
+        // Set initial position
+        if (target != null)
         {
-            Debug.LogWarning("Player is not assigned in CameraFollow!");
+            transform.position = target.position + offset;
+        }
+    }
+
+    void Start()
+    {
+        // Double check perspective settings
+        if (cam != null)
+        {
+            cam.clearFlags = CameraClearFlags.Skybox;  // Standard perspective camera setting
+        }
+    }
+
+    void Update()
+    {
+        if (target == null) return;
+
+        Vector3 targetPosition = target.position + offset;
+        transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothTime);
+    }
+
+    public void SetTarget(Transform newTarget)
+    {
+        target = newTarget;
+        if (target != null)
+        {
+            transform.position = target.position + offset;
+        }
+    }
+
+    // Optional: Method to adjust FOV during runtime if needed
+    public void SetFieldOfView(float newFOV)
+    {
+        fieldOfView = newFOV;
+        if (cam != null)
+        {
+            cam.fieldOfView = fieldOfView;
         }
     }
 }
