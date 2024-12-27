@@ -14,6 +14,7 @@ public class SceneTransition : MonoBehaviour
     {
         if (transitionTo != GameManager.Instance.transitionedFromScene)
         {
+            StartCoroutine(playerController.Instance.WalkIntoNewScene(exitDirection, exitTime));
             playerController.Instance.transform.position = startPoint.position;
         }
     }
@@ -22,6 +23,8 @@ public class SceneTransition : MonoBehaviour
         if (_other.CompareTag("Player"))
         {
             GameManager.Instance.transitionedFromScene = SceneManager.GetActiveScene().name;
+            playerController.Instance.pState.cutscene = true;
+            playerController.Instance.pState.invincible = true;
             SceneManager.LoadScene(transitionTo);
         }
     }

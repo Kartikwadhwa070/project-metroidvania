@@ -130,6 +130,7 @@ public class playerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (pState.cutscene) return;
         GetInputs();
         UpdateJumpVariables();
 
@@ -144,6 +145,7 @@ public class playerController : MonoBehaviour
         Jump();
         StartDash();
         Attack();
+        
     }
 
 
@@ -157,7 +159,7 @@ public class playerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (pState.dashing) return;
+        if (pState.dashing || pState.healing || pState.cutscene) return;
         Recoil();
     }
 
@@ -500,7 +502,8 @@ public class playerController : MonoBehaviour
 
         void FlashWhileInvincible()
         {
-            sr.material.color = pState.invincible ? Color.Lerp(Color.white, Color.black, Mathf.PingPong(Time.time * hitFlashSpeed, 1.0f)) : Color.white;
+        if (pState.cutscene) return;
+        sr.material.color = pState.invincible ? Color.Lerp(Color.white, Color.black, Mathf.PingPong(Time.time * hitFlashSpeed, 1.0f)) : Color.white;
         }
 
 
@@ -609,4 +612,24 @@ public class playerController : MonoBehaviour
         anim.SetBool("IsDashing", false);
         StartCoroutine(DashCooldown());
     }
+
+    public IEnumerator WalkIntoNewScene(Vector2 _exitDir, float _delay)
+    {
+        pState.invincible = true;
+        if (_exitDir.y > 0)
+        {
+            rb.velocity = JumpForce * _exitDir;
+        }
+        if (_exitDir.x != 0)
+        {
+            xAxis = _exitDir.x > 0 ? 1 : -1;
+            Move();
+        }
+
+        Flip();
+        yield return new WaitForSeconds(_delay);
+        pState.invincible = false;
+        pState.cutscene = false;
+    }
+
 }

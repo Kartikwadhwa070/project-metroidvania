@@ -5328,6 +5328,10 @@ PrefabInstance:
       propertyPath: transitionTo
       value: Cave_3
       objectReference: {fileID: 0}
+    - target: {fileID: 1633509024339895844, guid: 92fb0ec309ea09b438aaff1bd2749a59, type: 3}
+      propertyPath: exitDirection.x
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3401036267868853130, guid: 92fb0ec309ea09b438aaff1bd2749a59, type: 3}
       propertyPath: m_Name
       value: SceneTransition

@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;  
+using UnityEngine.UI;   
 public class SceneTransitionManager : MonoBehaviour
 {
     private static SceneTransitionManager instance;
