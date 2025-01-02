@@ -3,6 +3,14 @@
   "WorkspaceRootPath": "C:\\unity projects\\2d\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\unity projects\\2d\\Assets\\scripts\\Fireball.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\scripts\\Fireball.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\unity projects\\2d\\Library\\PackageCache\\com.unity.render-pipelines.universal@14.0.8\\Shaders\\2D\\Sprite-Lit-Default.shader||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Library\\PackageCache\\com.unity.render-pipelines.universal@14.0.8\\Shaders\\2D\\Sprite-Lit-Default.shader||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\unity projects\\2d\\Assets\\SceneFader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\SceneFader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -63,6 +71,32 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "Fireball.cs",
+              "DocumentMoniker": "C:\\unity projects\\2d\\Assets\\scripts\\Fireball.cs",
+              "RelativeDocumentMoniker": "Assets\\scripts\\Fireball.cs",
+              "ToolTip": "C:\\unity projects\\2d\\Assets\\scripts\\Fireball.cs",
+              "RelativeToolTip": "Assets\\scripts\\Fireball.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAB3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-01T08:36:42.405Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Sprite-Lit-Default.shader",
+              "DocumentMoniker": "C:\\unity projects\\2d\\Library\\PackageCache\\com.unity.render-pipelines.universal@14.0.8\\Shaders\\2D\\Sprite-Lit-Default.shader",
+              "RelativeDocumentMoniker": "Library\\PackageCache\\com.unity.render-pipelines.universal@14.0.8\\Shaders\\2D\\Sprite-Lit-Default.shader",
+              "ToolTip": "C:\\unity projects\\2d\\Library\\PackageCache\\com.unity.render-pipelines.universal@14.0.8\\Shaders\\2D\\Sprite-Lit-Default.shader",
+              "RelativeToolTip": "Library\\PackageCache\\com.unity.render-pipelines.universal@14.0.8\\Shaders\\2D\\Sprite-Lit-Default.shader",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2024-12-28T08:20:22.716Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "SceneFader.cs",
               "DocumentMoniker": "C:\\unity projects\\2d\\Assets\\SceneFader.cs",
               "RelativeDocumentMoniker": "Assets\\SceneFader.cs",
@@ -70,25 +104,23 @@
               "RelativeToolTip": "Assets\\SceneFader.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-27T21:36:11.718Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-27T21:36:11.718Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "UIManager.cs",
               "DocumentMoniker": "C:\\unity projects\\2d\\Assets\\scripts\\UIManager.cs",
               "RelativeDocumentMoniker": "Assets\\scripts\\UIManager.cs",
-              "ToolTip": "C:\\unity projects\\2d\\Assets\\scripts\\UIManager.cs*",
-              "RelativeToolTip": "Assets\\scripts\\UIManager.cs*",
+              "ToolTip": "C:\\unity projects\\2d\\Assets\\scripts\\UIManager.cs",
+              "RelativeToolTip": "Assets\\scripts\\UIManager.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-27T21:32:13.38Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-27T21:32:13.38Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "SceneTransitionManager.cs",
               "DocumentMoniker": "C:\\unity projects\\2d\\Assets\\scripts\\SceneTransitionManager.cs",
               "RelativeDocumentMoniker": "Assets\\scripts\\SceneTransitionManager.cs",
@@ -96,12 +128,11 @@
               "RelativeToolTip": "Assets\\scripts\\SceneTransitionManager.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-27T21:15:47.288Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-27T21:15:47.288Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "SceneTransition.cs",
               "DocumentMoniker": "C:\\unity projects\\2d\\Assets\\scripts\\SceneTransition.cs",
               "RelativeDocumentMoniker": "Assets\\scripts\\SceneTransition.cs",
@@ -109,12 +140,11 @@
               "RelativeToolTip": "Assets\\scripts\\SceneTransition.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAA9AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-27T21:15:42.573Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-27T21:15:42.573Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 10,
               "Title": "Zombie.cs",
               "DocumentMoniker": "C:\\unity projects\\2d\\Assets\\scripts\\Zombie.cs",
               "RelativeDocumentMoniker": "Assets\\scripts\\Zombie.cs",
@@ -122,12 +152,11 @@
               "RelativeToolTip": "Assets\\scripts\\Zombie.cs",
               "ViewState": "AgIAAAMAAAAAAAAAAAAAABgAAAAOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-25T10:50:30.669Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-25T10:50:30.669Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 11,
               "Title": "playerController.cs",
               "DocumentMoniker": "C:\\unity projects\\2d\\Assets\\scripts\\playerController.cs",
               "RelativeDocumentMoniker": "Assets\\scripts\\playerController.cs",
@@ -135,12 +164,11 @@
               "RelativeToolTip": "Assets\\scripts\\playerController.cs",
               "ViewState": "AgIAAF8CAAAAAAAAAAAIwGcCAABHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-22T19:17:44.578Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-22T19:17:44.578Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 9,
               "Title": "camerafollowscript.cs",
               "DocumentMoniker": "C:\\unity projects\\2d\\Assets\\scripts\\camerafollowscript.cs",
               "RelativeDocumentMoniker": "Assets\\scripts\\camerafollowscript.cs",
@@ -148,12 +176,11 @@
               "RelativeToolTip": "Assets\\scripts\\camerafollowscript.cs",
               "ViewState": "AgIAABQAAAAAAAAAAAAAwEAAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-25T10:50:26.093Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-25T10:50:26.093Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 8,
               "Title": "PlayerStateList.cs",
               "DocumentMoniker": "C:\\unity projects\\2d\\Assets\\scripts\\PlayerStateList.cs",
               "RelativeDocumentMoniker": "Assets\\scripts\\PlayerStateList.cs",
@@ -161,12 +188,11 @@
               "RelativeToolTip": "Assets\\scripts\\PlayerStateList.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAA0AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-22T19:17:03.019Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-22T19:17:03.019Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 7,
               "Title": "GameManager.cs",
               "DocumentMoniker": "C:\\unity projects\\2d\\Assets\\GameManager.cs",
               "RelativeDocumentMoniker": "Assets\\GameManager.cs",
@@ -174,12 +200,11 @@
               "RelativeToolTip": "Assets\\GameManager.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-30T19:00:57.428Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-30T19:00:57.428Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "HeartController.cs",
               "DocumentMoniker": "C:\\unity projects\\2d\\Assets\\scripts\\HeartController.cs",
               "RelativeDocumentMoniker": "Assets\\scripts\\HeartController.cs",
@@ -187,12 +212,11 @@
               "RelativeToolTip": "Assets\\scripts\\HeartController.cs",
               "ViewState": "AgIAAAsAAAAAAAAAAADwvyEAAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-25T19:36:33.808Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-25T19:36:33.808Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 13,
               "Title": "Enemy.cs",
               "DocumentMoniker": "C:\\unity projects\\2d\\Assets\\Enemy.cs",
               "RelativeDocumentMoniker": "Assets\\Enemy.cs",
@@ -200,12 +224,11 @@
               "RelativeToolTip": "Assets\\Enemy.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-23T12:12:56.12Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-23T12:12:56.12Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 12,
               "Title": "DestroyAfterAnimation.cs",
               "DocumentMoniker": "C:\\unity projects\\2d\\Assets\\scripts\\DestroyAfterAnimation.cs",
               "RelativeDocumentMoniker": "Assets\\scripts\\DestroyAfterAnimation.cs",
@@ -213,8 +236,7 @@
               "RelativeToolTip": "Assets\\scripts\\DestroyAfterAnimation.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-25T10:50:18.615Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-25T10:50:18.615Z"
             }
           ]
         }
